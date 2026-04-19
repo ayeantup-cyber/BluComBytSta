@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BlueComet ByteStar</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <div class="starfield"></div>
+
+  <div class="shell">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="logo-wrap">
+        <span class="rocket">🚀</span>
+        <h1 class="title">BlueCometByteStar</h1>
+      </div>
+      <nav class="tab-bar">
+        <button class="tab-btn active" data-panel="chat">💬 Chat</button>
+        <button class="tab-btn" data-panel="ai">🤖 AI</button>
+        <button class="tab-btn" data-panel="sandbox">⌨️ Sandbox</button>
+        <button class="tab-btn" data-panel="snippets">📄 Snippets</button>
+        <button class="tab-btn" data-panel="settings">⚙️ Settings</button>
+      </nav>
+      <div class="comet-badge" id="myBadge">⦿ —</div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- ===== CHAT PANEL ===== -->
+      <div class="panel active" id="panel-chat">
+        <div class="chat-layout">
+
+          <div class="chat-main">
+            <div class="card fill-col">
+              <div class="card-title">⦿ Live Feed</div>
+
+              <!-- Server status banner -->
+              <div id="serverBanner" class="server-banner offline">
+                <span id="serverBannerText">⬤ Chat server offline — connect your Pixel to enable live chat</span>
+                <button id="retryBtn" class="btn btn-ghost btn-xs">Retry</button>
+              </div>
+
+              <div id="chatFeed" class="chat-feed"></div>
+
+              <div class="chat-input-area">
+                <textarea id="chatInput" rows="3"
+                  placeholder="Type a message or paste code with ```backticks``` to share safely…"
+                  disabled></textarea>
+                <div class="controls">
+                  <button id="clearBtn" class="btn btn-ghost">Clear</button>
+                  <button id="sendBtn" class="btn btn-primary" disabled>Send ↑</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-sidebar">
+            <div class="card fill-col">
+              <div class="card-title">Online</div>
+              <div class="user-list" id="userList">
+                <div class="user-item offline-hint">No server connection</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Stats</div>
+              <div class="stat-grid">
+                <div>Messages <span id="msgCount" class="stat-val">0</span></div>
+                <div>Online <span id="onlineCount" class="stat-val">—</span></div>
+                <div>Server <span id="serverStatus" class="stat-val offline-txt">Offline</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== AI PANEL ===== -->
+      <div class="panel" id="panel-ai">
+        <div class="card fill-col ai-layout">
+          <div class="card-title">🤖 AI Chat — Claude</div>
+
+          <!-- AI server status -->
+          <div id="aiBanner" class="server-banner offline">
+            <span id="aiBannerText">⬤ AI server offline — set tunnel URL in Settings or use direct API key</span>
+          </div>
+
+          <div id="aiFeed" class="ai-feed"></div>
+
+          <div class="ai-thinking" id="aiThinking">
+            <div class="dot-pulse"><span></span><span></span><span></span></div>
+            Claude is thinking…
+          </div>
+
+          <div class="ai-input-row">
+            <textarea id="aiInput" rows="3" placeholder="Ask Claude anything…"></textarea>
+            <button id="aiSendBtn" class="btn btn-ai">Ask ↑</button>
+          </div>
+          <div class="ai-note">API key set in Settings → activates this tab from any device.</div>
+        </div>
+      </div>
+
+      <!-- ===== SANDBOX PANEL ===== -->
+      <div class="panel" id="panel-sandbox">
+        <div class="card fill-col sandbox-layout">
+          <div class="card-title">⌨️ Code Sandbox
+            <span class="safe-badge">🛡️ NO EXEC — display only</span>
+          </div>
+
+          <div class="sandbox-toolbar">
+            <select class="lang-select" id="langSelect">
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="bash">Bash / Shell</option>
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="json">JSON</option>
+              <option value="typescript">TypeScript</option>
+              <option value="plaintext">Plain Text</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="sandboxCopyBtn">📋 Copy</button>
+            <button class="btn btn-ghost btn-sm" id="sandboxClearBtn">Clear</button>
+            <button class="btn btn-primary btn-sm" id="sandboxShareBtn">📤 Share to Chat</button>
+          </div>
+
+          <div class="sandbox-split">
+            <div class="sandbox-half">
+              <div class="pane-label">INPUT</div>
+              <textarea id="sandboxInput" class="sandbox-textarea"
+                placeholder="Paste your code here…"></textarea>
+            </div>
+            <div class="sandbox-half">
+              <div class="pane-label">HIGHLIGHTED (read only)</div>
+              <div class="sandbox-preview">
+                <pre><code id="sandboxCode" class="language-javascript"></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SNIPPETS PANEL ===== -->
+      <div class="panel" id="panel-snippets">
+        <div class="card fill-col snippets-layout">
+          <div class="card-title">📄 Saved Snippets</div>
+          <div class="snippets-body">
+            <div class="snippets-list" id="snippetsList">
+              <div class="empty-hint">No snippets saved yet.</div>
+            </div>
+            <div class="snippets-view">
+              <div class="snippets-toolbar">
+                <input type="text" id="snippetName" class="setting-input" placeholder="Snippet name…">
+                <button class="btn btn-primary btn-sm" id="snippetSaveBtn">Save from Sandbox</button>
+                <button class="btn btn-danger btn-sm" id="snippetDeleteBtn">Delete</button>
+              </div>
+              <pre id="snippetContent" class="snippet-content">← Select a snippet, or save one from the Sandbox tab.</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS PANEL ===== -->
+      <div class="panel" id="panel-settings">
+        <div class="card settings-card">
+          <div class="card-title">⚙️ Settings</div>
+          <div class="settings-grid">
+
+            <div class="setting-section">IDENTITY</div>
+            <div class="setting-row">
+              <label class="setting-label">Display Name</label>
+              <input type="text" id="setDisplayName" class="setting-input"
+                placeholder="Leave blank for auto Comet name">
+              <div class="setting-note">Shown in chat. Auto-assigned if blank.</div>
+            </div>
+
+            <div class="setting-section">AI CONNECTION</div>
+            <div class="setting-row">
+              <label class="setting-label">Claude API Key</label>
+              <input type="password" id="setApiKey" class="setting-input"
+                placeholder="sk-ant-…">
+              <div class="setting-note">Stored in localStorage only. Never sent to your server.</div>
+            </div>
+            <div class="setting-row">
+              <label class="setting-label">Pixel Tunnel URL (optional)</label>
+              <input type="text" id="setTunnelUrl" class="setting-input"
+                placeholder="https://xyz.trycloudflare.com">
+              <div class="setting-note">If set, AI and Chat will try this URL first. Leave blank to use direct API key only.</div>
+            </div>
+            <div class="setting-row">
+              <label class="setting-label">AI System Prompt</label>
+              <textarea id="setSystemPrompt" class="setting-input" rows="4"
+                style="resize:vertical;">You are a helpful assistant embedded in the BlueComet ByteStar developer dashboard. Be concise and technical.</textarea>
+            </div>
+
+            <div class="setting-section">CHAT SERVER</div>
+            <div class="setting-row">
+              <label class="setting-label">Socket Server URL</label>
+              <input type="text" id="setSocketUrl" class="setting-input"
+                placeholder="https://xyz.trycloudflare.com (your Pixel tunnel)">
+              <div class="setting-note">Where your Node/Socket.IO server is running. Leave blank = try same origin.</div>
+            </div>
+
+            <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+            <div id="settingsSaved" class="save-confirm" style="display:none;">✓ Saved — reload to reconnect</div>
+
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      Ø ATØB.Q • © 2025 BlueComet Studio, INC. | ByteSt★R Technologies, LLC
+    </footer>
+  </div>
+
+  <!-- Socket.IO loaded dynamically by chat.js only if server URL is set -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
